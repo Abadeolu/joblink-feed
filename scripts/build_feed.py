@@ -53,8 +53,8 @@ def main():
             jobtype = text_or_empty(job, "jobtype").lower()
 
             # 🎯 FILTER: only part-time & internship
-            if jobtype not in ["part_time", "internship"]:
-                continue
+            #if jobtype not in ["part_time", "internship"]:
+               # continue
 
             title = text_or_empty(job, "title")
             company = text_or_empty(job, "company")
