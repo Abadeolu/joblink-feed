@@ -10,6 +10,7 @@ import requests
 # 🔧 SETTINGS
 FEED_URL = "https://www.ziprecruiter.com/feed/cpc_joblink_uk_test30.xml.gz"
 OUTPUT_FILE = "docs/jobs.json"
+MAX_JOBS = 500  # limit number of jobs
 
 # Ensure output folder exists
 os.makedirs("docs", exist_ok=True)
@@ -47,7 +48,7 @@ def main():
 
         jobs = []
 
-        # Step 4: Extract + filter ONLY
+        # Step 4: Extract + filter + limit
         for job in root.findall(".//job"):
             jobtype = text_or_empty(job, "jobtype").lower()
 
@@ -82,6 +83,10 @@ def main():
                 "category": category,
                 "date": date
             })
+
+            # 🔒 LIMIT jobs
+            if len(jobs) >= MAX_JOBS:
+                break
 
         # Step 5: Save JSON (compressed)
         with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
