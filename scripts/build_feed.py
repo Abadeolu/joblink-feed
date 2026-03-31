@@ -97,7 +97,7 @@ def main():
             ref = text_or_empty(job, "referencenumber")
             date = text_or_empty(job, "date")
 
-            location_parts = [p for p in [city, state, country] if p]
+            location_parts = [p for p in [city, country] if p]
             location = ", ".join(location_parts)
 
             jobs.append({
