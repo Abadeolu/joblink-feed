@@ -90,7 +90,7 @@ def main():
             jobtype = text_or_empty(job, "jobtype").lower()
             title = text_or_empty(job, "title")
             company = text_or_empty(job, "company")
-            state = text_or_empty(job, "state")
+            city = text_or_empty(job, "city")
             salary = text_or_empty(job, "salary")
             description = text_or_empty(job, "description")
             url = text_or_empty(job, "url")
@@ -105,6 +105,7 @@ def main():
                 "title": title,
                 "company": company,
                 "location": location,
+                "city": city,
                 "salary": salary,
                 "description": description,
                 "url": url,
