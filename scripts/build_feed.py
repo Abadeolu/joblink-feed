@@ -96,6 +96,7 @@ def main():
             url = text_or_empty(job, "url")
             ref = text_or_empty(job, "referencenumber")
             date = text_or_empty(job, "date")
+            country = text_or_empty(job, "country")
 
             location_parts = [p for p in [city, country] if p]
             location = ", ".join(location_parts)
@@ -111,7 +112,8 @@ def main():
                 "url": url,
                 "job_type": jobtype,
                 "category": category,
-                "date": date
+                "date": date,
+                "country": country
             })
 
             # 🔒 LIMIT jobs
