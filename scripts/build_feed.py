@@ -4,13 +4,12 @@ import os
 import shutil
 import tempfile
 import xml.etree.ElementTree as ET
-
 import requests
 
 # 🔧 SETTINGS
 FEED_URL = "https://www.ziprecruiter.com/feed/cpc_joblink_uk_test30.xml.gz"
 OUTPUT_FILE = "docs/jobs.json"
-MAX_JOBS = 500  # limit number of jobs
+MAX_JOBS = 500
 
 # 🎯 FILTER SETTINGS
 ALLOWED_CATEGORIES = [
@@ -31,7 +30,6 @@ ALLOWED_CITIES = [
     "Harrogate"
 ]
 
-# Ensure output folder exists
 os.makedirs("docs", exist_ok=True)
 
 
@@ -40,12 +38,26 @@ def text_or_empty(node, tag):
     return value.strip() if isinstance(value, str) else ""
 
 
+# ✅ NEW: Clean description formatting
+def clean_description(desc):
+    if not desc:
+        return ""
+
+    # Replace escaped newlines with actual line breaks
+    desc = desc.replace("\\n", "\n")
+
+    # Optional: clean excessive spacing
+    desc = desc.strip()
+
+    return desc
+
+
 def main():
     with tempfile.TemporaryDirectory() as tmpdir:
         gz_path = os.path.join(tmpdir, "feed.xml.gz")
         xml_path = os.path.join(tmpdir, "feed.xml")
 
-        # Step 1: Download feed
+        # Download
         response = requests.get(FEED_URL, timeout=60)
         response.raise_for_status()
 
@@ -54,49 +66,50 @@ def main():
 
         print("Downloaded feed")
 
-        # Step 2: Decompress
+        # Decompress
         with gzip.open(gz_path, "rb") as f_in:
             with open(xml_path, "wb") as f_out:
                 shutil.copyfileobj(f_in, f_out)
 
         print("Decompressed feed")
 
-        # Step 3: Parse XML
+        # Parse
         tree = ET.parse(xml_path)
         root = tree.getroot()
 
         jobs = []
 
-        # Step 4: Extract + filter + limit
         for job in root.findall(".//job"):
 
             category = text_or_empty(job, "category")
             city = text_or_empty(job, "city")
             country = text_or_empty(job, "country")
 
-            # ✅ Country filter
+            # ❌ Skip if category missing
+            if not category:
+                continue
+
+            # Country filter
             if country != "GB":
                 continue
 
-            # ✅ City filter (case-insensitive)
+            # City filter
             if city.lower() not in [c.lower() for c in ALLOWED_CITIES]:
                 continue
 
-            # ✅ Category filter (partial match)
+            # Category filter
             if not any(cat.lower() in category.lower() for cat in ALLOWED_CATEGORIES):
                 continue
 
-            # --- extract remaining fields ---
+            # Extract fields
             jobtype = text_or_empty(job, "jobtype").lower()
             title = text_or_empty(job, "title")
             company = text_or_empty(job, "company")
-            city = text_or_empty(job, "city")
             salary = text_or_empty(job, "salary")
-            description = text_or_empty(job, "description")
+            description = clean_description(text_or_empty(job, "description"))
             url = text_or_empty(job, "url")
             ref = text_or_empty(job, "referencenumber")
             date = text_or_empty(job, "date")
-            country = text_or_empty(job, "country")
 
             location_parts = [p for p in [city, country] if p]
             location = ", ".join(location_parts)
@@ -116,11 +129,10 @@ def main():
                 "country": country
             })
 
-            # 🔒 LIMIT jobs
             if len(jobs) >= MAX_JOBS:
                 break
 
-        # Step 5: Save JSON (compressed)
+        # Save JSON
         with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
             json.dump({"jobs": jobs}, f, ensure_ascii=False)
 
