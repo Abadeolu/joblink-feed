@@ -12,6 +12,25 @@ FEED_URL = "https://www.ziprecruiter.com/feed/cpc_joblink_uk_test30.xml.gz"
 OUTPUT_FILE = "docs/jobs.json"
 MAX_JOBS = 500  # limit number of jobs
 
+# 🎯 FILTER SETTINGS
+ALLOWED_CATEGORIES = [
+    "Retail",
+    "Sports and Recreation",
+    "Business",
+    "Personal Care",
+    "Arts and Entertainment",
+    "Education",
+    "Food",
+    "Non profit"
+]
+
+ALLOWED_CITIES = [
+    "Leeds",
+    "Bradford",
+    "York",
+    "Harrogate"
+]
+
 # Ensure output folder exists
 os.makedirs("docs", exist_ok=True)
 
@@ -50,21 +69,31 @@ def main():
 
         # Step 4: Extract + filter + limit
         for job in root.findall(".//job"):
+
+            category = text_or_empty(job, "category")
+            city = text_or_empty(job, "city")
+            country = text_or_empty(job, "country")
+
+            # ✅ Country filter
+            if country != "GB":
+                continue
+
+            # ✅ City filter (case-insensitive)
+            if city.lower() not in [c.lower() for c in ALLOWED_CITIES]:
+                continue
+
+            # ✅ Category filter (partial match)
+            if not any(cat.lower() in category.lower() for cat in ALLOWED_CATEGORIES):
+                continue
+
+            # --- extract remaining fields ---
             jobtype = text_or_empty(job, "jobtype").lower()
-
-            # 🎯 FILTER: only part-time & internship
-            #if jobtype not in ["part_time", "internship"]:
-               # continue
-
             title = text_or_empty(job, "title")
             company = text_or_empty(job, "company")
-            city = text_or_empty(job, "city")
             state = text_or_empty(job, "state")
-            country = text_or_empty(job, "country")
             salary = text_or_empty(job, "salary")
             description = text_or_empty(job, "description")
             url = text_or_empty(job, "url")
-            category = text_or_empty(job, "category")
             ref = text_or_empty(job, "referencenumber")
             date = text_or_empty(job, "date")
 
