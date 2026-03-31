@@ -39,17 +39,38 @@ def text_or_empty(node, tag):
 
 
 # ✅ NEW: Clean description formatting
+import re
+
 def clean_description(desc):
     if not desc:
         return ""
 
-    # Replace escaped newlines with actual line breaks
+    # 1. Fix escaped newlines
     desc = desc.replace("\\n", "\n")
 
-    # Optional: clean excessive spacing
-    desc = desc.strip()
+    # 2. Add line breaks before common headings
+    headings = [
+        "Job Description",
+        "Key Responsibilities",
+        "Responsibilities",
+        "What We're Looking For",
+        "Requirements",
+        "Role Overview",
+        "Key Requirements",
+        "Why Apply",
+        "Contacts to Apply"
+    ]
 
-    return desc
+    for h in headings:
+        desc = re.sub(rf"\s*({h})\s*", r"\n\n\1\n", desc, flags=re.IGNORECASE)
+
+    # 3. Add line breaks after full stops (basic paragraph splitting)
+    desc = re.sub(r"\.\s+", ".\n", desc)
+
+    # 4. Clean excessive whitespace
+    desc = re.sub(r"\n{3,}", "\n\n", desc)
+
+    return desc.strip()
 
 
 def main():
