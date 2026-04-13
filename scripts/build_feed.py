@@ -12,6 +12,15 @@ OUTPUT_FILE = "docs/jobs.json"
 MAX_JOBS = 500
 
 # 🎯 FILTER SETTINGS
+# 🎯 TITLE KEYWORDS FILTER
+TITLE_KEYWORDS = [
+    "part time",
+    "part-time",
+    "bar",
+    "retail",
+    "marketing"
+]
+
 ALLOWED_CATEGORIES = [
     "Retail",
     "Sports and Recreation",
@@ -125,6 +134,10 @@ def main():
             # Extract fields
             jobtype = text_or_empty(job, "jobtype").lower()
             title = text_or_empty(job, "title")
+
+            # ✅ Title keyword filter (case-insensitive)
+            if not any(keyword in title.lower() for keyword in TITLE_KEYWORDS):
+                continue
             company = text_or_empty(job, "company")
             salary = text_or_empty(job, "salary")
             description = clean_description(text_or_empty(job, "description"))
