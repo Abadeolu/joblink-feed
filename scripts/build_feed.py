@@ -15,10 +15,7 @@ MAX_JOBS = 500
 # 🎯 TITLE KEYWORDS FILTER
 TITLE_KEYWORDS = [
     "part time",
-    "part-time",
-    "bar",
-    "retail",
-    "marketing"
+    "part-time"
 ]
 
 ALLOWED_CATEGORIES = [
