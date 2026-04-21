@@ -9,7 +9,7 @@ import requests
 # 🔧 SETTINGS
 FEED_URL = "https://www.ziprecruiter.com/feed/cpc_joblink_uk_test30.xml.gz"
 OUTPUT_FILE = "docs/jobs.json"
-MAX_JOBS = 3
+MAX_JOBS = 500
 
 # 🎯 FILTER SETTINGS
 # 🎯 TITLE KEYWORDS FILTER
