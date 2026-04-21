@@ -36,7 +36,7 @@ ALLOWED_CITIES = [
     "York",
     "Harrogate",
     "Wakefield",
-    Sheffield",
+    "Sheffield",
     "Huddersfield",
     "Knaresborough",
     "Skipton"
