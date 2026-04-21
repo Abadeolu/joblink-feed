@@ -34,7 +34,12 @@ ALLOWED_CITIES = [
     "Leeds",
     "Bradford",
     "York",
-    "Harrogate"
+    "Harrogate",
+    "Wakefield",
+    Sheffield",
+    "Huddersfield",
+    "Knaresborough",
+    "Skipton"
 ]
 
 os.makedirs("docs", exist_ok=True)
